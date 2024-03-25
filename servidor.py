@@ -24,7 +24,7 @@ Métodos:
 - main: Función principal que orquesta el flujo del programa.
 '''
 
-# Llamaremos las librerias de python
+# Importar dependecias
 from socket import socket, AF_INET, SOCK_STREAM, error
 from _thread  import * # Para lanzar un hilo (<<thread>>) en python via el módulo estandar <<threading>>
 import time
@@ -32,36 +32,42 @@ import threading # La técnica que permite que una aplicación ejecute simultane
 import sys # Sys - parametros y funciones especificos del sistema
 import re
 
-listaClientes = list() # Escuchamos hasta n clientes
-# Aquí creamos las funciones enunciadas en los comentario y como se desarrollan
-# Definamos las dirección I´de este servidor  SERVER_ADDRESS = '127.0.0.1' # Definamos el puerto de escucha SERVER_PORT = 2222
+listaClientes = list() # Se guarda hasta n clientes
 
+"""
+Solicita al usuario ingresar la dirección IP y el puerto donde el servidor estará escuchando.
+Retorna la dirección IP y el puerto como una tupla.
+"""
 def ini():
     try:
         host = input("Servidor: ")
         port = int(input("Puerto: "))
-        return host, port
-    
+        return host, port    
     except Exception as e:
         print("Error " + str(e))
         exit()
 
+"""
+Crea un socket TCP/IP configurado para ser no bloqueante y con un largo tiempo de espera.
+Retorna el socket configurado.
+"""
 def crear_socket():
     try:
-        # socket.SOCK_STREAM tipo del conector, dependiento el parametro anterior (no todos los dominios)...
-        s = socket(AF_INET, SOCK_STREAM)
-        
-        # ahora conectése al servidor web en el puerto 80: el puerto http normal.
-        # usa socket.setblocking(False) para que no sea bloqueante
-        s.setblocking(False)
-        # establece un temporizador que ejecuta una función a una pieza de código especifico una vez que ...
-        s.settimeout(600000)
+        # socket.AF_INET es el dominio del conector, En este caso, un conector IPv4.
+        # socket.SOCK_STREAM tipo del conector, dependiente del parámetro anterior.
+        s = socket(AF_INET, SOCK_STREAM)        
+        s.setblocking(False) # Proceso no bloqueante.
+        s.settimeout(600000) # Tiempo de espera en milisegundos.
         return s
     
     except Exception as e:
         print("Error " + str(e))
     
-def ligar_Socket(host, port, s): # (host, port) para la familia de direciones AF_INET, donde host es una cadena que representa un...
+"""
+Vincula el socket s a la dirección IP y puerto especificados. Reintenta en caso de error.
+No retorna ningún valor.
+"""
+def ligar_Socket(host, port, s):
     while True:
         try:
             s.bind((host, port)) # Define IP and Port # Asociamos el socket con la dirección IP y el Puerto
@@ -69,7 +75,10 @@ def ligar_Socket(host, port, s): # (host, port) para la familia de direciones AF
         except error as e:
             print("Error ", str(e))
 
-# Listo, ahora comenzamos a escuchar y capturar los datos que nos envien los clientes
+"""
+Espera y acepta una conexión entrante. Imprime la dirección y puerto del cliente conectado.
+Retorna el objeto de conexión y la dirección del cliente.
+"""
 def conexiones(s):
     try:
         conn, addr = s.accept()
@@ -79,6 +88,9 @@ def conexiones(s):
     except Exception as e:
         print("Error " + str(e))
     
+"""
+Envía un mensaje de bienvenida al cliente recién conectado.
+"""
 def saludo(conn):
     try:
         strMensaje = "\nBienvenido, estas conectado al servidor!!! \nSi tienes un problema matemático simple estare encantado de responderlo. "
@@ -86,9 +98,13 @@ def saludo(conn):
     except Exception as e:
         print("Error " + str(e))
         
+"""
+Realiza una operación matemática simple basada en la expresión encontrada en el mensaje del cliente.
+Retorna el resultado de la operación como una cadena.
+"""
 def realizar_operacion(match):
     operacion_sin_espacios = re.sub(r'\s*', '', match)
-    # Identificamos los números y el operador
+    # Identificamos los números y el operador para realizar la operación
     numeros = re.split(r'[\+\-\*/]', operacion_sin_espacios)
     operador = re.search(r'[\+\-\*/]', operacion_sin_espacios).group()
     
@@ -101,14 +117,18 @@ def realizar_operacion(match):
     elif "/" in operador:
         return str(float(numeros[0]) / float(numeros[1]))
     
-def responder(conn, strMsgIn): # Recibimos informacón del cliente. Usamos el método strMsgIn[::-1]para cifrar el mensaje
+"""
+Procesa y responde a los mensajes recibidos del cliente.
+Si el mensaje contiene una operación matemática válida, calcula y envía el resultado.
+De lo contrario, solicita al cliente que proporcione un problema matemático.
+"""
+def responder(conn, strMsgIn):
     try:
-        # strMensaje = "Mensaje - " + strMsgIn[::-1]
         saludos = ["hola", "buenos días", "buenas"]
         if any(saludo in strMsgIn.lower() for saludo in saludos):
             strMensaje = "Hola, ¿tienes algún problema matemático?"
         else:
-            # Buscamos operaciones matemáticas en el mensaje            
+            # Se identifica operaciones matemáticas en el mensaje            
             operacion = re.search(r'\d+\s*[\+\-\*/]\s*\d+', strMsgIn)
             if operacion:
                 resultado = realizar_operacion(operacion.group(0))
@@ -122,12 +142,16 @@ def responder(conn, strMsgIn): # Recibimos informacón del cliente. Usamos el m�
     except Exception as e:
         print("Error " + str(e))
         
-def manejo_Cliente(conn, addr): # Recibimos informacón del cliente. Usamos el método strMsgIn[::-1]para cifrar el mensaje
+"""
+Gestiona la comunicación con un cliente conectado. Recibe mensajes del cliente, responde a estos mensajes,
+y finaliza la conexión si el cliente envía "terminar".
+"""
+def manejo_Cliente(conn, addr):
     try:
-        while True: #While connection is true
+        while True: #While si la conexión es true
             strReq = conn.recv(2048)
-            strReq = strReq.decode("utf-8") # Recibimos información del cliente. Usamos el método decode() porque la información viene...
-            if strReq.lower() == "terminar": # Si el cliente escribe "Terminar" finaliza la conexión.
+            strReq = strReq.decode("utf-8") # Recibimos información del cliente. Usamos el método decode() para decodificar información.
+            if strReq.lower() == "terminar": # Si el cliente escribe "terminar" finaliza la conexión.
                 conn.send("terminar".encode("utf-8"))
                 print("Conexión finalizada por el cliente")
             print(f"Cliente envia: {strReq}: código de cliente: {addr[1]} \n")
@@ -139,7 +163,12 @@ def manejo_Cliente(conn, addr): # Recibimos informacón del cliente. Usamos el m
         conn.close()
         print(f"Conexión con el cliente ({addr[0]}:{addr[1]}) cerrada")
         
-# Aquí vamos a crear nuestra función principal o Main
+"""
+Función principal del servidor. Inicializa el servidor solicitando la dirección IP y el puerto para escuchar.
+Crea y vincula el socket a la dirección y puerto especificados. Comienza a escuchar conexiones entrantes.
+Para cada conexión entrante, envía un saludo y crea un nuevo hilo para manejar la comunicación con ese cliente.
+Continúa aceptando nuevos clientes y mantiene la comunicación hasta que se interrumpe manualmente.
+"""
 def main():
     try:
         bandera = True
@@ -150,7 +179,7 @@ def main():
         print("\nAdvertancia: este servidor es de tipo Esclavo, no, escribe si el servidor no tiene ningún mensaje para responder a los clientes")
         print(f"Escuchando es {host}:{port} ")
         print("Esperamos por los clientes ")
-        while True: # Este código es importante para que los hilos no se rompan
+        while True: #While si la conexión es true. Este código es importante para que los hilos no se rompan
             conn, addr = conexiones(s)
             # Esta variable espero a los clientes
             if addr not in listaClientes:

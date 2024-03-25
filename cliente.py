@@ -23,32 +23,45 @@
     - recibir: Espera y recibe mensajes del servidor.
     - main: Función principal que orquesta el flujo del programa.
 '''
+
+# Importar dependecias
 from socket import *
 import time
 
 # Usar funciones
+"""
+Solicita al usuario la dirección IP y el puerto del servidor al que desea conectarse.
+Retorna una tupla con la dirección IP y el puerto como enteros.
+"""
 def obtener_datos_servidor():
     try:
-        host = input("Dirección del servidor: ") # 127.0.0.1
-        port = int(input("Puerto: ")) # 7777
+        host = input("Dirección del servidor: ") # Ejemplo: 127.0.0.1
+        port = int(input("Puerto: ")) # Ejemplo: 7777
         return host, port
     except Exception as e:
         print("Error " + str(e))
         return e
         
+"""
+Crea y configura un socket TCP/IP no bloqueante con un tiempo de espera largo.
+Retorna el socket configurado o None en caso de error.
+"""
 def crear_socket():
     try:
-        # Función para crear un socket, un conector para poder realizar conexiones de red.
         # socket.AF_INET es el dominio del conector, En este caso, un conector IPv4.
         # socket.SOCK_STREAM tipo del conector, dependiente del parámetro anterior.
         s = socket(AF_INET, SOCK_STREAM)
-        s.setblocking(False)
-        s.settimeout(600000)
+        s.setblocking(False) # Proceso no bloqueante.
+        s.settimeout(600000) # Tiempo de espera en milisegundos.
         return s
         
     except Exception as e:
         print("Error " + str(e))
     
+"""
+Intenta establecer una conexión con el servidor especificado por host y port utilizando el socket s.
+Retorna True si la conexión es exitosa, False en caso contrario.
+""" 
 def conectarse(host, port, s):
     try:
         s.connect((host, port))
@@ -57,7 +70,11 @@ def conectarse(host, port, s):
     except Exception as e:
         print("Error de conexión", str(e))
         return False
-    
+
+"""
+Realiza hasta tres intentos para conectar con el servidor, esperando 5 segundos entre cada intento.
+Retorna True si la conexión es exitosa, False si falla después de tres intentos.
+"""   
 def intento_conexion(host, port, s):
     try:
         intentos = 0
@@ -72,6 +89,10 @@ def intento_conexion(host, port, s):
     except Exception as e:
         print("Error " + str(e))
         
+"""
+Espera y recibe un mensaje del servidor a través del socket s.
+Retorna el mensaje recibido decodificado.
+"""
 def recibir(s):
     try:
         strResp = s.recv(2048)
@@ -80,7 +101,11 @@ def recibir(s):
         
     except Exception as e:
         print("Error " + str(e))
-        
+ 
+"""
+Función principal del cliente. Solicita la dirección y puerto del servidor, intenta establecer una conexión,
+y permite al usuario enviar y recibir mensajes hasta que decida terminar la sesión enviando "terminar".
+"""       
 def main():
     try:
         host, port = obtener_datos_servidor()
@@ -91,9 +116,8 @@ def main():
                 while True:
                     strMsg = input("Mensaje: ")
                     s.send(strMsg.encode("utf-8"))
-                    # s.send(strMsg.encode("utf-8")[2048])
                     strResp = recibir(s)
-                    if strResp.lower() == "terminar":
+                    if strResp.lower() == "terminar": # Si se escribe "terminar" finaliza la conexión.
                         break
                     print(f"Servidor contesta: {strResp}")
                     
