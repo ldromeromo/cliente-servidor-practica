@@ -1,20 +1,33 @@
-Programa servdiros para la construcción de un chat
-Creado por: Laura Daniela Romero Montañez
-De que se trata el código:
-    El presente código es para crear un servidor chat que corre a través de una red local mediante el protocolo TCP/IP a través de unos permisos de IP
-    Ejem: http://localhost; http://127.0.0.1; http://ip_del_equipo puerto 2323
-    
-    El servidor hace las veces de conectar a clientes y ellos le preguntan al servidor a través del chat 
-    que puedes hacer y que necesitan del servidor. Esto provoca los clientes abren la conexió, el servidor
-    en este ejercicio el actua como esclavo de los clientes hasta que los clientes le hablen el no puede
-    constestar. El servidor se mantiene ejecutandose siempre hasta que desde la linea de comandos lo saquemos, esto nos lleva
-    que el servidor espere a los clientes por siempre, Los clientes se pueden salir mediantes la opción "terminar" ctr + z, estos avisan al...
-    si un cliente se ha salido. Los clientes le escriben al servidor y se comunicas en orden de llegada si dos mensajes llegan
-    de diferente cliente el servidor respondera cada mensaje en el orden que llegan.
-Funciones que se van a usar:
-    ini(), esta pide al usuario la IP del host del servidor y el puerti necesario en el sockets
-    crear_socket(), este nos retorna un nuevo sockes siguiendo el esquema del protocolo TCP
-    ligar_Sockers(Host, Port), une un socket a los datos que se dan para el host y el port
-    conexiones(), esta espera por la coneció de un cliente y nos devuelve la ip del cliente y el puerto del cliente.
-    responder(conn), maneja los mensajes revibidos de cada cliente. La función enviar es llamada una vez que recibe un mensaje
-    manejo_Cliente(conn), en esta el servidor la adjudica un número a un cliente y le envía un mensaje...
+# Aplicación de Chat TCP/IP
+
+## Autor
+Laura Daniela Romero Montañez
+
+## Descripción
+Esta aplicación de chat permite la comunicación entre un servidor y múltiples clientes a través de una red local usando el protocolo TCP/IP. Está compuesta por dos scripts principales: uno para el servidor y otro para el cliente. Los usuarios pueden conectarse al servidor usando la dirección IP y puerto adecuados, enviar mensajes, y recibir respuestas. El servidor puede manejar solicitudes de múltiples clientes concurrentemente, respondiendo a cada uno según el orden de llegada de los mensajes.
+
+## Funcionalidades
+- **Cliente:**
+  - Conexión a un servidor mediante TCP/IP.
+  - Envío y recepción de mensajes.
+  - Desconexión segura del chat.
+- **Servidor:**
+  - Escucha de conexiones entrantes a través de TCP/IP.
+  - Gestión de múltiples clientes de manera concurrente.
+  - Procesamiento y respuesta a mensajes de clientes.
+  - Ejecución de operaciones matemáticas simples por solicitud del cliente.
+
+## Cómo Usar
+1. **Iniciar el Servidor:**
+   - Ejecutar el script del servidor.
+   - Ingresar la dirección IP y puerto donde el servidor escuchará conexiones.
+2. **Conectar con el Cliente:**
+   - Ejecutar el script del cliente en una máquina diferente o en la misma máquina pero en una terminal distinta.
+   - Ingresar la dirección IP y puerto del servidor al que se desea conectar.
+3. **Comunicación:**
+   - Una vez establecida la conexión, los clientes pueden comenzar a enviar mensajes al servidor.
+   - Para desconectarse, el cliente debe enviar una señal de terminación específica (por ejemplo, "terminar").
+
+## Requisitos
+- Python 3
+
