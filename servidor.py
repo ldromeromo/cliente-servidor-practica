@@ -4,7 +4,11 @@ Servidor de Chat
 Autor: Laura Daniela Romero Montañez
 
 Descripción:
-Este script implementa el lado servidor de una aplicación de chat, funcionando sobre una red local mediante el protocolo TCP/IP. Está diseñado para escuchar conexiones entrantes de clientes, procesar sus mensajes y enviar respuestas adecuadas. Los clientes pueden preguntar al servidor y recibir asistencia, por ejemplo, con problemas matemáticos simples. El servidor permanece activo indefinidamente, esperando por clientes, hasta que se detiene manualmente. Soporta múltiples conexiones de clientes de manera concurrente, gestionando cada una en un hilo separado para una comunicación eficiente.
+Este script implementa el lado servidor de una aplicación de chat, funcionando sobre una red local mediante el protocolo TCP/IP. 
+Está diseñado para escuchar conexiones entrantes de clientes, procesar sus mensajes y enviar respuestas adecuadas. Los clientes 
+pueden preguntar al servidor y recibir asistencia, por ejemplo, con problemas matemáticos simples. El servidor permanece activo 
+indefinidamente, esperando por clientes, hasta que se detiene manualmente. Soporta múltiples conexiones de clientes de manera 
+concurrente, gestionando cada una en un hilo separado para una comunicación eficiente.
 
 Funcionalidades:
 - Escucha y acepta conexiones de clientes a través de TCP/IP.
@@ -27,9 +31,7 @@ Métodos:
 # Importar dependecias
 from socket import socket, AF_INET, SOCK_STREAM, error
 from _thread  import * # Para lanzar un hilo (<<thread>>) en python via el módulo estandar <<threading>>
-import time
-import threading # La técnica que permite que una aplicación ejecute simultaneamente simuntáneamente varios operaciones en el ...
-import sys # Sys - parametros y funciones especificos del sistema
+import threading 
 import re
 
 listaClientes = list() # Se guarda hasta n clientes

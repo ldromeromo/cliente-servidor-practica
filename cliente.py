@@ -6,9 +6,10 @@
     Descripción:
     Este script implementa el lado cliente de una aplicación de chat que se comunica con un servidor a través de una red 
     local usando el protocolo TCP/IP. Permite a los usuarios conectarse a un servidor especificando su dirección IP y puerto 
-    (ej. http://localhost, http://127.0.0.1, http://ip_del_equipo:puerto). Una vez conectados, los clientes pueden enviar preguntas o 
-    mensajes al servidor y recibir respuestas. El servidor debe estar ejecutándose y escuchando en la dirección y puerto especificados 
-    para que la conexión tenga éxito. Los clientes pueden desconectarse en cualquier momento usando una opción de terminación específica.
+    (ej. http://localhost, http://127.0.0.1, http://ip_del_equipo:puerto). Una vez conectados, los clientes pueden enviar 
+    preguntas o mensajes al servidor y recibir respuestas. El servidor debe estar ejecutándose y escuchando en la dirección y puerto 
+    especificados para que la conexión tenga éxito. Los clientes pueden desconectarse en cualquier momento usando una opción de 
+    terminación específica.
 
     Funcionalidades:
     - Conexión a un servidor chat mediante TCP/IP.
